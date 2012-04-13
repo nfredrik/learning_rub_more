@@ -169,7 +169,7 @@ class Board
     reduced = false
     #check each piece for matching neigbors and mark them
     for i in (0..53)
-      if !(@board[i].ismarked)
+      if !(@board[i].ismarked) and (@board[i].identity != " ")
         startcheck(i)
       end
     end
@@ -184,15 +184,38 @@ class Board
 
   #This begins a recursive check of a piece and it's neighbors for reduction
   def startcondense(pos)
-    set = []
+    set = [pos]
     numfound = 0
 
     condense(set,pos,numfound)
+
+    #find bottommost piece
+    endpoint = 0;
+    for i in (0..numfound)
+      if set[i] > endpoint
+        endpoint = set[i]
+      end
+    end
+
+    #find bottommost/leftmost piece
+    for i in (0..BRDSZ-1)
+      if !set.include?(endpoint-1) and !@board[endpoint].isleft
+        break
+      else
+        endpoint -= 1
+      end
+    end
+
+    #cleanup
+    for i in (0..numfound)
+      @board[set[i]].assiden(" ")
+    end
+    @board[endpoint].assiden("Z")
   end
 
   #This begins a recursive check of a piece and it's neighbors for marking
   def startcheck(pos) #position
-    set = [pos,pos]
+    set = [pos,pos]   #initialized so ruby recognizes type
     numfound = 0
 
     check(set,pos,numfound)
@@ -214,31 +237,31 @@ class Board
     set[numfound] = pos
     numfound += 1
 
-    if !p.top
+    if !p.istop
       temp = pos-BRDSZ
       q = @board[temp]
-      if (p.ismatch(q)) and !q.ismarked
+      if (p.ismatch(q)) and q.ismarked
         condense(set,temp,numfound)
       end
     end
-    if !p.bot
+    if !p.isbot
       temp = pos+BRDSZ
       q = @board[temp]
-      if (p.ismatch(q)) and !q.ismarked
+      if (p.ismatch(q)) and q.ismarked
         condense(set,temp,numfound)
       end
     end
-    if !p.left
+    if !p.isleft
       temp = pos-1
       q = @board[temp]
-      if (p.ismatch(q)) and !q.ismarked
+      if (p.ismatch(q)) and q.ismarked
         condense(set,temp,numfound)
       end
     end
-    if !p.right
+    if !p.isright
       temp = pos+1
       q = @board[temp]
-      if (p.ismatch(q)) and !q.ismarked
+      if (p.ismatch(q)) and q.ismarked
         condense(set,temp,numfound)
       end
     end
@@ -246,32 +269,32 @@ class Board
 
   def check (set,pos,numfound)
     p = @board[pos]
-    p.unmark
+    p.mark
     set[numfound] = pos
     numfound += 1
 
-    if !p.top
+    if !p.istop
       temp = pos-BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
         check(set,temp,numfound)
       end
     end
-    if !p.bot
+    if !p.isbot
       temp = pos+BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
         check(set,temp,numfound)
       end
     end
-    if !p.left
+    if !p.isleft
       temp = pos-1
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
         check(set,temp,numfound)
       end
     end
-    if !p.right
+    if !p.isright
       temp = pos+1
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
@@ -282,5 +305,9 @@ class Board
 end
 
 b = Board.new
+b.droppiece("a",1)
+b.droppiece("a",1)
+b.droppiece("a",1)
+b.printboard
 b.update
 b.printboard

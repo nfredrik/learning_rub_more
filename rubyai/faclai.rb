@@ -2,8 +2,6 @@
 #This intends to remake the Fairie Alchemy game with an AI that looks ahead
 #A later version will hopefully be useful to a player of the game
 
-#Consider moving all classes to seperate files and requiring them
-
 ################################################################################
 #Notes:                                                                        
 # 4 directions a pair of objects to be dropped can face 
@@ -22,20 +20,21 @@
 # ELEMX = 3*ELEM(X-1) points = 3^(X-1)   
 ################################################################################
 
-BRDSZ=8          #Num Columns (including 
+BRDSZ=6          #Num Columns (including 
 MAXELEM=13       #Highest value for X in ELEMX we'll allow at any time
 randlimit=2      #Highest value for X in ELEMX we'll allow during creation
 
+#Consider moving class definitions/implementations to other files and
+#requiring them
 class Piece
   def initialize
     @identity = " "
-    @value=0
   end
   def identity
     @identity
   end
-  def value
-    @value
+  def assiden(a)
+    @identity = a
   end
 end
 
@@ -45,25 +44,39 @@ class Board
  
    #The board is a 6 * 9 set of Pieces
     i=0
-    while i<54
+    for i in (0..53)
       @board[i] = Piece.new
       i=i+1
     end
   end
   def printboard
     puts "--------"
-    i=0
     j=0
-    while i<9
-      j=i*6
-      i=i+1
+    for i in (0..8)
+      j=i*BRDSZ
       puts "-" + @board[j+0].identity + @board[j+1].identity +
                  @board[j+2].identity + @board[j+3].identity +
                  @board[j+4].identity + @board[j+5].identity + "-"
     end
     puts "--------"
   end
+  def droppiece(p,c) #(piece,column)
+    i = 0 + c
+    while i<54
+      if @board[i].identity != " "
+        @board[i-BRDSZ].assiden(p)
+        break
+      end
+      if i+BRDSZ > 54
+        @board[i].assiden(p)
+      end
+      i=i+BRDSZ
+    end
+  end
 end
 
 b = Board.new
+b.droppiece("a",1)
+b.droppiece("b",1)
+b.droppiece("c",2)
 b.printboard

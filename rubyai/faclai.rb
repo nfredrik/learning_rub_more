@@ -38,6 +38,15 @@ class Piece
     @marked = false
   end
 
+  #interactive methods
+  def ismatch(inpiece)
+    if @identity == inpiece.identity
+      return true
+    else
+      return false
+    end
+  end 
+
   #getters
   def identity
     @identity
@@ -124,6 +133,7 @@ class Board
       @board[5+i*BRDSZ].right
     end
   end
+
   def printboard
     puts "--------"
     j=0
@@ -135,6 +145,7 @@ class Board
     end
     puts "--------"
   end
+
   def droppiece(p,c) #(piece,column)
     i = c
     while i<54
@@ -148,64 +159,123 @@ class Board
       i=i+BRDSZ
     end
   end
+
   def update
     while reduce
     end
   end
+
   def reduce
     reduced = false
     #check each piece for matching neigbors and mark them
     for i in (0..53)
       if !(@board[i].ismarked)
-        startcheck(@board[i],i)
+        startcheck(i)
+      end
+    end
+    for i in (0..53)
+      if @board[i].ismarked
+        reduced = true
+        startcondense(i)
       end
     end
     return reduced
   end
-  #This begins a recursive check of a piece and it's neighbors
-  def startcheck(p,pos) #piece, position
+
+  #This begins a recursive check of a piece and it's neighbors for reduction
+  def startcondense(pos)
     set = []
     numfound = 0
 
-    check(@board[pos-BRDSZ],set,numfound,pos-BRDSZ)
+    condense(set,pos,numfound)
+  end
+
+  #This begins a recursive check of a piece and it's neighbors for marking
+  def startcheck(pos) #position
+    set = [pos,pos]
+    numfound = 0
+
+    check(set,pos,numfound)
 
     #cleanup
     if(numfound<3)
       if numfound == 1  #we found only this node
-        set[0].unmark
-      else
-        set[0].unmark   #we found and appended only one other
-        set[1].unmark
+        @board[set[0]].unmark
+      else              #we found and appended only one other
+        @board[set[0]].unmark
+        @board[set[1]].unmark
       end
     end
   end
-  def check (p,set,numfound,pos)
-    temp = 0
-    set[numfound] = p
+
+  def condense(set,pos,numfound)
+    p = @board[pos]
+    p.unmark
+    set[numfound] = pos
     numfound += 1
 
     if !p.top
       temp = pos-BRDSZ
-      if p.identity == @board[temp].identity
-        check(@board[temp],set,numfound,temp)
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        condense(set,temp,numfound)
       end
     end
     if !p.bot
       temp = pos+BRDSZ
-      if p.identity == @board[temp].identity
-        check(@board[temp],set,numfound,temp)
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        condense(set,temp,numfound)
       end
     end
     if !p.left
       temp = pos-1
-      if p.identity == @board[temp].identity
-        check(@board[temp],set,numfound,temp)
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        condense(set,temp,numfound)
       end
     end
     if !p.right
       temp = pos+1
-      if p.identity == @board[temp].identity
-        check(@board[temp],set,numfound,temp)
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        condense(set,temp,numfound)
+      end
+    end
+  end
+
+  def check (set,pos,numfound)
+    p = @board[pos]
+    p.unmark
+    set[numfound] = pos
+    numfound += 1
+
+    if !p.top
+      temp = pos-BRDSZ
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        check(set,temp,numfound)
+      end
+    end
+    if !p.bot
+      temp = pos+BRDSZ
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        check(set,temp,numfound)
+      end
+    end
+    if !p.left
+      temp = pos-1
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        check(set,temp,numfound)
+      end
+    end
+    if !p.right
+      temp = pos+1
+      q = @board[temp]
+      if (p.ismatch(q)) and !q.ismarked
+        check(set,temp,numfound)
       end
     end
   end

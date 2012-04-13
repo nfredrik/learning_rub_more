@@ -4,36 +4,65 @@
 
 #Consider moving all classes to seperate files and requiring them
 
-class Board
+################################################################################
+#Notes:                                                                        
+# 4 directions a pair of objects to be dropped can face 
+# Vertical directions (2) can be dropped in 6 places
+# Horizontal directions (2) can be dropped in 5 
+# Thus each drop calculation must account for 2*6+2*5=22 positions 
+#  
+# The branch factor is thus [NUMELS + (NUMELS-1)+...+(NUMELS-NUMELS)]*22 
+# NUMELS will max out at 13+12+11+...+1+0, which is 91 
+# This means we have a maximum branching factor of 113 
+#  
+# ELEM1 = 1 points  
+# ELEM2 = 3 points = 3*ELEM1 
+# ELEM3 = 9 points = 3*ELEM2  
+# .. 
+# ELEMX = 3*ELEM(X-1) points = 3^(X-1)   
+################################################################################
+
+BRDSZ=8          #Num Columns (including 
+MAXELEM=13       #Highest value for X in ELEMX we'll allow at any time
+randlimit=2      #Highest value for X in ELEMX we'll allow during creation
+
+class Piece
   def initialize
-    @board = ["-","-","-","-","-","-","-","-",
-              "-"," "," "," "," "," "," ","-",
-              "-"," "," "," "," "," "," ","-",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "|"," "," "," "," "," "," ","|",
-              "-","-","-","-","-","-","-","-"] 
+    @identity = " "
+    @value=0
   end
-  def printboard
-    i = 0
-    j = 0
-    while i <= 10
-      j = i * 8
-      i = i + 1
-      puts @board[j + 0] + @board[j + 1] + @board[j + 2] + @board[j + 3]                 + @board[j + 4] + @board[j + 5] + @board[j + 6] + @board[j + 7]
-    end
+  def identity
+    @identity
+  end
+  def value
+    @value
   end
 end
 
-#randomlimit
-rl = 2
-while rl <= 5
-  puts (1+rand(rl)).to_s + " " + (1+rand(rl)).to_s + " " + (1+rand(rl)).to_s
-  rl = rl + 1
+class Board
+  def initialize
+    @board=[]
+ 
+   #The board is a 6 * 9 set of Pieces
+    i=0
+    while i<54
+      @board[i] = Piece.new
+      i=i+1
+    end
+  end
+  def printboard
+    puts "--------"
+    i=0
+    j=0
+    while i<9
+      j=i*6
+      i=i+1
+      puts "-" + @board[j+0].identity + @board[j+1].identity +
+                 @board[j+2].identity + @board[j+3].identity +
+                 @board[j+4].identity + @board[j+5].identity + "-"
+    end
+    puts "--------"
+  end
 end
 
 b = Board.new

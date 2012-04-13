@@ -22,6 +22,12 @@
 
 BRDSZ=6          #Num Columns (including 
 MAXELEM=13       #Highest value for X in ELEMX we'll allow at any time
+LFTEG = 1        #Contants for keeping track of what edges pieces are near
+RITEG = 2
+BOTEG = 3
+TOPEG = 4
+NOEG  = 0
+
 randlimit=2      #Highest value for X in ELEMX we'll allow during creation
 
 #Consider moving class definitions/implementations to other files and
@@ -29,12 +35,19 @@ randlimit=2      #Highest value for X in ELEMX we'll allow during creation
 class Piece
   def initialize
     @identity = " "
+    @edge = NOEG
   end
   def identity
     @identity
   end
-  def assiden(a)
-    @identity = a
+  def edge
+    @edge
+  end
+  def assedge(newedge)
+    @edge = newedge
+  end
+  def assiden(newiden)
+    @identity = newiden
   end
 end
 
@@ -47,6 +60,16 @@ class Board
     for i in (0..53)
       @board[i] = Piece.new
       i=i+1
+    end
+    for i in (0..5)
+      @board[i].assedge(TOPEG)
+    end
+    for i in (48..53)
+      @board[i].assedge(BOTEG)
+    end
+    for i in (0..8)
+      @board[i*BRDSZ].assedge(LFTEG)
+      @board[5+i*BRDSZ].assedge(RITEG)
     end
   end
   def printboard
@@ -61,7 +84,7 @@ class Board
     puts "--------"
   end
   def droppiece(p,c) #(piece,column)
-    i = 0 + c
+    i = c
     while i<54
       if @board[i].identity != " "
         @board[i-BRDSZ].assiden(p)
@@ -73,10 +96,9 @@ class Board
       i=i+BRDSZ
     end
   end
+  def update
+  end
 end
 
 b = Board.new
-b.droppiece("a",1)
-b.droppiece("b",1)
-b.droppiece("c",2)
 b.printboard

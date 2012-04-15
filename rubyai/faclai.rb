@@ -187,15 +187,10 @@ class Board
     set = [pos]
     numfound = 0
 
-    condense(set,pos,numfound)
+    numfound = condense(set,pos,numfound)
 
     #find bottommost piece
-    endpoint = 0;
-    for i in (0..numfound)
-      if set[i] > endpoint
-        endpoint = set[i]
-      end
-    end
+    endpoint = set.max
 
     #find bottommost/leftmost piece
     for i in (0..BRDSZ-1)
@@ -207,7 +202,7 @@ class Board
     end
 
     #cleanup
-    for i in (0..numfound)
+    for i in (0..numfound-1)
       @board[set[i]].assiden(" ")
     end
     @board[endpoint].assiden("Z")
@@ -218,7 +213,7 @@ class Board
     set = [pos,pos]   #initialized so ruby recognizes type
     numfound = 0
 
-    check(set,pos,numfound)
+    numfound = check(set,pos,numfound)
 
     #cleanup
     if(numfound<3)
@@ -241,30 +236,31 @@ class Board
       temp = pos-BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and q.ismarked
-        condense(set,temp,numfound)
+        numfound = condense(set,temp,numfound)
       end
     end
     if !p.isbot
       temp = pos+BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and q.ismarked
-        condense(set,temp,numfound)
+        numfound = condense(set,temp,numfound)
       end
     end
     if !p.isleft
       temp = pos-1
       q = @board[temp]
       if (p.ismatch(q)) and q.ismarked
-        condense(set,temp,numfound)
+        numfound = condense(set,temp,numfound)
       end
     end
     if !p.isright
       temp = pos+1
       q = @board[temp]
       if (p.ismatch(q)) and q.ismarked
-        condense(set,temp,numfound)
+        numfound = condense(set,temp,numfound)
       end
     end
+    return numfound
   end
 
   def check (set,pos,numfound)
@@ -277,37 +273,40 @@ class Board
       temp = pos-BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
-        check(set,temp,numfound)
+        numfound = check(set,temp,numfound)
       end
     end
     if !p.isbot
       temp = pos+BRDSZ
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
-        check(set,temp,numfound)
+        numfound = check(set,temp,numfound)
       end
     end
     if !p.isleft
       temp = pos-1
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
-        check(set,temp,numfound)
+        numfound = check(set,temp,numfound)
       end
     end
     if !p.isright
       temp = pos+1
       q = @board[temp]
       if (p.ismatch(q)) and !q.ismarked
-        check(set,temp,numfound)
+        numfound = check(set,temp,numfound)
       end
     end
+    return numfound
   end
 end
 
 b = Board.new
-b.droppiece("a",1)
-b.droppiece("a",1)
-b.droppiece("a",1)
+b.droppiece("a",2)
+b.droppiece("a",2)
+b.droppiece("a",2)
+b.droppiece("a",3)
+b.droppiece("a",4)
 b.printboard
 b.update
 b.printboard

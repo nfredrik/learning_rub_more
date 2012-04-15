@@ -46,8 +46,12 @@ class Piece
       return false
     end
   end 
-
-  #getters
+  def next
+    #!!WARNING: Deprecated use of [0]. If running Ruby1.9 this needs to be .ord
+    @identity = (@identity[0]+1).chr
+  end
+ 
+ #getters
   def identity
     @identity
   end
@@ -188,6 +192,7 @@ class Board
     numfound = 0
 
     numfound = condense(set,pos,numfound)
+    piecetype = @board[set[0]].identity
 
     #find bottommost piece
     endpoint = set.max
@@ -203,9 +208,11 @@ class Board
 
     #cleanup
     for i in (0..numfound-1)
-      @board[set[i]].assiden(" ")
+      if(set[i] != endpoint)
+        @board[set[i]].assiden(" ")
+      end
     end
-    @board[endpoint].assiden("Z")
+    @board[endpoint].next
   end
 
   #This begins a recursive check of a piece and it's neighbors for marking

@@ -1,0 +1,18 @@
+################################################################################
+#Notes:                                                                        
+# 4 directions a pair of objects to be dropped can face 
+# Vertical directions (2) can be dropped in 6 places
+# Horizontal directions (2) can be dropped in 5 
+# Thus each drop calculation must account for 2*6+2*5=22 positions 
+#  
+# The branch factor is thus [NUMELS + (NUMELS-1)+...+(NUMELS-NUMELS)]*22 
+# NUMELS will max out at 13+12+11+...+1+0, which is 91 
+# This means we have a maximum branching factor of 113 
+#  
+# ELEM1 = 1 points  
+# ELEM2 = 3 points = 3*ELEM1 
+# ELEM3 = 9 points = 3*ELEM2  
+# .. 
+# ELEMX = 3*ELEM(X-1) points = 3^(X-1)   
+################################################################################
+

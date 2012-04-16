@@ -16,3 +16,10 @@
 # ELEMX = 3*ELEM(X-1) points = 3^(X-1)   
 ################################################################################
 
+
+What's left to add (before the AI):
+-Points values
+-Forcing pieces at certain points values
+-User input to match menu for making moves
+-Update the board so that a user can tell which column is which
+-more?

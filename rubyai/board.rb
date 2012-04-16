@@ -2,13 +2,12 @@
 #3+ linked positions when updated/updates the new value, can drop pieces, and
 #print the board state. 
 
-require File.expand_path('../piece.rb', __FILE__)
-
-BRDSZ=6          #Num Columns (including 
+BRDSZ=6          #Num Columns 
 
 class Board
   #The board is a 6 * 9 set of Pieces, initialize it as such
   def initialize
+    @randlimit = 2
     @board=[]
  
     #We create each position as a piece and initialize them to know their edges
@@ -42,6 +41,13 @@ class Board
                  @board[j+4].identity + @board[j+5].identity + "-"
     end
     puts "--------"
+  end
+
+  #Copies the board to some other board
+  def copy (inboard)
+    for i in (0..53)
+      @board[i].copy(inboard[i])
+    end
   end
 
   #Drops a "piece" to the desired column. A piece is any ascii char
@@ -88,6 +94,18 @@ class Board
         reduced = true
         startcondense(i)
       end
+    end
+
+    #!!WARNING: Uses deprecated functionality
+    #update maximum piece type for generation
+    if (reduced == false)
+      maximum = 98
+      for i in (0..53)
+        if (@board.identity[0] > maximum)
+          maximum = @board.identity[0]
+        end
+      end
+      @randlimit = maximum - 96
     end
 
     #return whether we need another iteration
@@ -214,5 +232,13 @@ class Board
       end
     end
     return numfound
+  end
+
+  #Getters
+  def board
+     @board
+  end
+  def randlimit
+    @randlimit
   end
 end

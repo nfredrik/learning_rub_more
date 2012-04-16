@@ -27,10 +27,21 @@ class Piece
     end
   end 
 
-  #!!WARNING: Uses a deprecated function
+  #Make this piece a copy of another
+  def copy(inpiece)
+    assiden(inpiece.identity)
+
+    #Flag testing
+    inpiece.isbot    ? bot   : @isbot = false
+    inpiece.istop    ? top   : @istop = false
+    inpiece.isleft   ? left  : @isleft = false
+    inpiece.isright  ? right : @isright = false
+    inpiece.ismarked ? mark  : @ismarked = false
+  end
+
+  #!!WARNING: Uses a deprecated functionality
   #This updates the current "identity" character to the next
   def next
-    #!!WARNING: Deprecated use of [0]. If running Ruby1.9 this needs to be .ord
     @identity = (@identity[0]+1).chr
   end
  

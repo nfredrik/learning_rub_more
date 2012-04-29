@@ -7,6 +7,6 @@ require File.expand_path('../board.rb', __FILE__)
 require File.expand_path('../game.rb' , __FILE__)
 
 g = Game.new
-g.printboard
-g.genpieces
-g.showmoves
+while true
+  g.showmoves
+end

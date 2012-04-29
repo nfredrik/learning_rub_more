@@ -32,7 +32,7 @@ class Board
 
   #This prints the board to standard out; adds a boarder to it
   def printboard
-    puts "--------"
+    puts "-123456-"
     j=0
     for i in (0..8)
       j=i*BRDSZ
@@ -40,7 +40,7 @@ class Board
                  @board[j+2].identity + @board[j+3].identity +
                  @board[j+4].identity + @board[j+5].identity + "-"
     end
-    puts "--------"
+    puts "-123456-"
   end
 
   #Copies the board to some other board
